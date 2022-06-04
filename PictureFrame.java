@@ -5,6 +5,16 @@ import javax.swing.*;
 public class PictureFrame {
   public int[] reroll = null;
   Aardvark master = null;
+  
+  int x = 30;
+  int y = 20;
+  int degree = 10;
+
+  public void drawDominoes(Graphics g, Aardvark aardvark) {
+    for (Domino d : aardvark._d) {
+      dp.drawDomino(g, d);
+    }
+  }
 
   class DominoPanel extends JPanel {
     private static final long serialVersionUID = 4190229282411119364L;
@@ -12,7 +22,7 @@ public class PictureFrame {
     public void drawGrid(Graphics g) {
       for (int are = 0; are < 7; are++) {
         for (int see = 0; see < 8; see++) {
-          drawDigitGivenCentre(g, 30 + see * 20, 30 + are * 20, 20,
+          drawDigitGivenCentre(g, x + see * y, x + are * y, y,
               master.grid[are][see]);
         }
       }
@@ -21,36 +31,36 @@ public class PictureFrame {
     public void drawGridLines(Graphics g) {
       g.setColor(Color.LIGHT_GRAY);
       for (int are = 0; are <= 7; are++) {
-        g.drawLine(20, 20 + are * 20, 180, 20 + are * 20);
+        g.drawLine(y, y + are * y, 180, y + are * y);
       }
       for (int see = 0; see <= 8; see++) {
-        g.drawLine(20 + see * 20, 20, 20 + see * 20, 160);
+        g.drawLine(y + see * y, y, y + see * y, 160);
       }
     }
 
     public void drawHeadings(Graphics g) {
       for (int are = 0; are < 7; are++) {
-        fillDigitGivenCentre(g, 10, 30 + are * 20, 20, are+1);
+        fillDigitGivenCentre(g, degree, x + are * y, y, are+1);
       }
 
       for (int see = 0; see < 8; see++) {
-        fillDigitGivenCentre(g, 30 + see * 20, 10, 20, see+1);
+        fillDigitGivenCentre(g, x + see * y, degree, y, see+1);
       }
     }
 
     public void drawDomino(Graphics g, Domino d) {
       if (d.placed) {
-        int y = Math.min(d.ly, d.hy);
-        int x = Math.min(d.lx, d.hx);
-        int w = Math.abs(d.lx - d.hx) + 1;
-        int h = Math.abs(d.ly - d.hy) + 1;
+        final int y = Math.min(d.ly, d.hy);
+        final int x = Math.min(d.lx, d.hx);
+        final int w = Math.abs(d.lx - d.hx) + 1;
+        final int h = Math.abs(d.ly - d.hy) + 1;
         g.setColor(Color.WHITE);
-        g.fillRect(20 + x * 20, 20 + y * 20, w * 20, h * 20);
+        g.fillRect(y + x * y, y + y * y, w * y, h * y);
         g.setColor(Color.RED);
-        g.drawRect(20 + x * 20, 20 + y * 20, w * 20, h * 20);
-        drawDigitGivenCentre(g, 30 + d.hx * 20, 30 + d.hy * 20, 20, d.high,
+        g.drawRect(y + x * y, y + y * y, w * y, h * y);
+        drawDigitGivenCentre(g, x + d.hx * y, x + d.hy * y, y, d.high,
             Color.BLUE);
-        drawDigitGivenCentre(g, 30 + d.lx * 20, 30 + d.ly * 20, 20, d.low,
+        drawDigitGivenCentre(g, x + d.lx * y, x + d.ly * y, y, d.low,
             Color.BLUE);
       }
     }
@@ -88,28 +98,16 @@ public class PictureFrame {
     protected void paintComponent(Graphics g) {
       g.setColor(Color.YELLOW);
       g.fillRect(0, 0, getWidth(), getHeight());
-
-      // numbaz(g);
-      //
-      // if (master!=null && master.orig != null) {
-      // drawRoll(g, master.orig);
-      // }
-      // if (reroll != null) {
-      // drawReroll(g, reroll);
-      // }
-      //
-      // drawGrid(g);
-      if (master.mode == 1) {
+      if (master.mode == 0 || master.mode == 1) {
         drawGridLines(g);
         drawHeadings(g);
         drawGrid(g);
+      }
+      if (master.mode == 1) {
         master.drawGuesses(g);
       }
       if (master.mode == 0) {
-        drawGridLines(g);
-        drawHeadings(g);
-        drawGrid(g);
-        master.drawDominoes(g);
+        master.pf.drawDominoes(g, master);
       }
     }
 

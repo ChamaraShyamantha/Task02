@@ -91,7 +91,7 @@ public class Aardvark {
     }
   }
 
-  int pg() {
+  int printGrid() {
     for (int are = 0; are < 7; are++) {
       for (int see = 0; see < 8; see++) {
         if (grid[are][see] != 9) {
@@ -173,13 +173,13 @@ public class Aardvark {
   }
 
   private void tryToRotateDominoAt(int x, int y) {
-    Domino d = findDominoAt(x, y);
+    Domino d = findDominoAndGuess(x, y, _d);
     if (thisIsTopLeftOfDomino(x, y, d)) {
       if (d.ishl()) {
         boolean weFancyARotation = Math.random() < 0.5;
         if (weFancyARotation) {
           if (theCellBelowIsTopLeftOfHorizontalDomino(x, y)) {
-            Domino e = findDominoAt(x, y + 1);
+            Domino e = findDominoAndGuess(x, y + 1, _d);
             e.hx = x;
             e.lx = x;
             d.hx = x + 1;
@@ -194,7 +194,7 @@ public class Aardvark {
         boolean weFancyARotation = Math.random() < 0.5;
         if (weFancyARotation) {
           if (theCellToTheRightIsTopLeftOfVerticalDomino(x, y)) {
-            Domino e = findDominoAt(x + 1, y);
+            Domino e = findDominoAndGuess(x + 1, y, _d);
             e.hx = x;
             e.lx = x + 1;
             d.hx = x;
@@ -211,12 +211,12 @@ public class Aardvark {
   }
 
   private boolean theCellToTheRightIsTopLeftOfVerticalDomino(int x, int y) {
-    Domino e = findDominoAt(x + 1, y);
+    Domino e = findDominoAndGuess(x + 1, y, _d);
     return thisIsTopLeftOfDomino(x + 1, y, e) && !e.ishl();
   }
 
   private boolean theCellBelowIsTopLeftOfHorizontalDomino(int x, int y) {
-    Domino e = findDominoAt(x, y + 1);
+    Domino e = findDominoAndGuess(x, y + 1, _d);
     return thisIsTopLeftOfDomino(x, y + 1, e) && e.ishl();
   }
 
@@ -233,8 +233,8 @@ public class Aardvark {
     return null;
   }
 
-  private Domino findGuessAt(int x, int y) {
-    for (Domino d : _g) {
+  private Domino findDominoAndGuess(int x, int y, List<Domino> _r) {
+    for (Domino d : _r) {
       if ((d.lx == x && d.ly == y) || (d.hx == x && d.hy == y)) {
         return d;
       }
@@ -275,17 +275,17 @@ public class Aardvark {
   public final int ZERO = 0;
 
   public void run() {
-    IOSpecialist io = new IOSpecialist();
 
-    System.out
-        .println("Welcome To Abominodo - The Best Dominoes Puzzle Game in the Universe");
+    IOLibrary io = new IOLibrary();
+    System.out.println("Welcome To Abominodo - The Best Dominoes Puzzle Game in the Universe");
+
     System.out.println("Version 1.0 (c), Kevan Buckley, 2010");
     System.out.println();
     System.out.println(MultiLinugualStringTable.getMessage(0));
     playerName = io.getString();
 
-    System.out.printf("%s %s. %s", MultiLinugualStringTable.getMessage(1),
-        playerName, MultiLinugualStringTable.getMessage(2));
+    System.out.printf("%s %s. %s", MultiLinugualStringTable.getMessage(1), playerName,
+            MultiLinugualStringTable.getMessage(2));
 
     int _$_ = -9;
     while (_$_ != ZERO) {
@@ -367,7 +367,7 @@ public class Aardvark {
           collateGrid();
           break;
         }
-        pg();
+        printGrid();
         generateGuesses();
         collateGuessGrid();
         mode = 1;
@@ -409,7 +409,7 @@ public class Aardvark {
 
             break;
           case 1:
-            pg();
+            printGrid();
             break;
           case 2:
             printGuessGrid();
@@ -529,7 +529,7 @@ public class Aardvark {
             }
             x13--;
             y13--;
-            Domino lkj = findGuessAt(x13, y13);
+            Domino lkj = findDominoAndGuess(x13, y13, _g);
             if (lkj == null) {
               System.out.println("Couln't find a domino there");
             } else {
@@ -650,7 +650,7 @@ public class Aardvark {
               }
               x3--;
               y3--;
-              Domino lkj2 = findDominoAt(x3, y3);
+              Domino lkj2 = findDominoAndGuess(x3, y3, _d);
               System.out.println(lkj2);
               break;
             case 3: {
@@ -721,7 +721,7 @@ public class Aardvark {
 
         }
         mode = 0;
-        pg();
+        printGrid();
         pf.dp.repaint();
         long now = System.currentTimeMillis();
         try {
@@ -847,12 +847,6 @@ public class Aardvark {
 
   public static void main(String[] args) {
     new Aardvark().run();
-  }
-
-  public void drawDominoes(Graphics g) {
-    for (Domino d : _d) {
-      pf.dp.drawDomino(g, d);
-    }
   }
 
   public static int gecko(int _) {
